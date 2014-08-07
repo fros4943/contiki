@@ -488,10 +488,16 @@ public class ContikiMoteType implements MoteType {
       tmp.addMemorySection("tmp.bss", bssSecParser.parse(0));
 
       try {
-        int referenceVar = (int) varMem.getVariable("referenceVar").addr;
+        Symbol refSymbol = varMem.getVariable("referenceVar");
+        if (refSymbol == null) {
+          throw new UnknownVariableException("No referenceVar symbol found in mote type memory: " + varMem.toString());
+        }
+        int referenceVar = (int) refSymbol.addr;
         myCoreComm.setReferenceAddress(referenceVar);
       } catch (UnknownVariableException e) {
-        throw new MoteTypeCreationException("JNI call error: " + e.getMessage(), e);
+        throw new MoteTypeCreationException("Error setting reference variable: " + e.getMessage(), e);
+      } catch (RuntimeException e) {
+          throw new MoteTypeCreationException("Error setting reference variable: " + e.getMessage(), e);
       }
 
       getCoreMemory(tmp);
