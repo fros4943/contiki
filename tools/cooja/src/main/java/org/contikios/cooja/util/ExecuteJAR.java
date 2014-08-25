@@ -100,7 +100,7 @@ public class ExecuteJAR {
     /* Load simulation */
     logger.info("Loading " + config);
     Cooja.externalToolsUserSettingsFile = new File(
-        System.getProperty("user.home"), 
+        System.getProperty("user.home"),
         Cooja.EXTERNAL_TOOLS_USER_SETTINGS_FILENAME);
     Simulation s = Cooja.quickStartSimulationConfig(config, false, null);
     if (s == null) {
@@ -200,7 +200,7 @@ public class ExecuteJAR {
 
   /**
    * Builds executable JAR from current simulation
-   * 
+   *
    * @param gui GUI. Must contain simulation
    * @param outputFile Output file
    */
@@ -223,7 +223,7 @@ public class ExecuteJAR {
     for (MoteType t: simulation.getMoteTypes()) {
       if (!t.getClass().getName().contains("SkyMoteType")) {
         throw new RuntimeException(
-            "You simulation contains the mote type: " + Cooja.getDescriptionOf(t.getClass()) + "\n" + 
+            "You simulation contains the mote type: " + Cooja.getDescriptionOf(t.getClass()) + "\n" +
             "Only the Sky Mote Type is currently supported.\n"
         );
       }
@@ -293,7 +293,7 @@ public class ExecuteJAR {
     /* Unpacking COOJA core JARs */
     String[] coreJARs = new String[] {
         "tools/cooja/lib/jdom.jar", "tools/cooja/lib/log4j.jar",
-            "tools/cooja/dist/cooja.jar", "tools/cooja/lib/jsyntaxpane.jar"
+            "tools/cooja/build/libs/cooja.jar", "tools/cooja/lib/jsyntaxpane.jar"
     };
     for (String jar: coreJARs) {
       File jarFile = new File(Cooja.getExternalToolsSetting("PATH_CONTIKI"), jar);
@@ -361,7 +361,7 @@ public class ExecuteJAR {
       logger.info("Wrote external tools config: " + externalToolsConfig.getName());
     } catch (Exception e2) {
       throw (RuntimeException) new RuntimeException(
-          "Error when writing external tools configuration: " + e2.getMessage()   
+          "Error when writing external tools configuration: " + e2.getMessage()
       ).initCause(e2);
     }
 
@@ -381,10 +381,10 @@ public class ExecuteJAR {
     } catch (Exception e1) {
       e1.printStackTrace();
       throw (RuntimeException) new RuntimeException(
-          "Error when writing project config: " + e1.getMessage()   
+          "Error when writing project config: " + e1.getMessage()
       ).initCause(e1);
     }
-    
+
     /* Delete existing META-INF dir */
     File metaInfDir = new File(workingDir, "META-INF");
     if (metaInfDir.exists() && metaInfDir.isDirectory()) {
@@ -432,9 +432,9 @@ public class ExecuteJAR {
       for (int i=0; i < err.length; i++) {
         logger.fatal(">> " + err[i]);
       }
-      
+
       /* Forward exception */
-      throw (RuntimeException) 
+      throw (RuntimeException)
       new RuntimeException("Error when building executable JAR: " + e.getMessage()).initCause(e);
     }
 
@@ -455,7 +455,7 @@ public class ExecuteJAR {
     /* Checks configuration for EXPORT attributes:
      * copy: file copy file to exported JAR, update file path.
      * discard: remove config element */
-    
+
     for (Element c : ((List<Element>) e.getChildren()).toArray(new Element[0])) {
       Attribute a = c.getAttribute("EXPORT");
       if (a != null && a.getValue().equals("copy")) {
@@ -463,7 +463,7 @@ public class ExecuteJAR {
         File file = gui.restorePortablePath(new File(c.getText()));
         if (!file.exists()) {
           throw new RuntimeException("File not found: " + file);
-        }     
+        }
         byte[] data = ArrayUtils.readFromFile(file);
         if (data == null) {
           throw new RuntimeException("Could not copy file: " + file);
@@ -487,12 +487,12 @@ public class ExecuteJAR {
       } else if (a != null) {
         throw new RuntimeException("Unknown EXPORT attribute value: " + a.getValue());
       }
-      
+
       /* Recursive search */
       handleExportAttributesToJAR(c, gui, toDir);
     }
   }
-  
+
   private static void handleExportAttributesFromJAR(Element e, File config, File toDir) {
     for (Element c : ((List<Element>) e.getChildren()).toArray(new Element[0])) {
       Attribute a = c.getAttribute("EXPORT");
@@ -518,7 +518,7 @@ public class ExecuteJAR {
           logger.info("Skip: unpack file from JAR: " + file.getName());
         }
       }
-      
+
       /* Recursive search */
       handleExportAttributesFromJAR(c, config, toDir);
     }
